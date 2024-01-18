@@ -1,4 +1,26 @@
 const postsSchema = require("../models/postsModel");
+const userModel = require("../models/userModel");
+
+
+exports.checkName = async (req, res, next) =>{
+  try{
+    const {author} = req.body;
+
+    const data = await userModel.findById(author);
+
+    const name = data.name;
+
+
+    res.status(200).json({
+      name,
+    })
+
+
+  }
+  catch(e){
+    console.log(e);
+  }
+}
 
 exports.newPost = async (req, res, next) => {
   try {

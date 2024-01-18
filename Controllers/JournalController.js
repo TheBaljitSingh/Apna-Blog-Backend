@@ -10,7 +10,7 @@ exports.Journal= async (req, res) =>{
             // const filter = {display: public};
             const allData = await post.find({display: "public"})
 
-            return res.json(allData);
+            return res.json(allData, );
 
     }
     catch (error){
