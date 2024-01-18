@@ -19,15 +19,12 @@ exports.registerUser = async(req,res,next)=>{
         }
     });
 
+    res.status(201).json({
+        user,
+    })
 
 
-    const token = user.getJWTToken();
-    console.log("token is"+token);
-
-    // we can use send token
-
-
-    sendToken(user,201,res);
+    
 
 
 };
