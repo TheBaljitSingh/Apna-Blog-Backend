@@ -20,7 +20,7 @@ app.use(cors());
           
 
 
-  app.use("/api/", post);
+  app.use("/auth/", post);
   app.use("/api/", allJournal);
   app.use('/api/', sendMail);
   // app.use("/api/", userRoute);

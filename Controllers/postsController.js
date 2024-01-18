@@ -25,7 +25,7 @@ exports.newPost = async (req, res, next) => {
     console.error(error.message);
     res.status(500).json({
       success: false,
-      error: "Server error",
+      error: "Server error hai to save nahi hua",
     });
   }
 };
