@@ -5,10 +5,13 @@ const userModel = require("../models/userModel");
 exports.checkName = async (req, res, next) =>{
   try{
     const {author} = req.body;
+40
+    console.log(author);
+
 
     const data = await userModel.findById(author);
 
-    const name = data.name;
+   const name = data.name;
 
 
     res.status(200).json({
@@ -18,6 +21,22 @@ exports.checkName = async (req, res, next) =>{
 
   }
   catch(e){
+    console.log(e);
+  }
+}
+
+exports.deletePost = async (req, res, next)=>{
+  try{
+
+    const {id} = req.body;
+
+    const deletedPost = await postsSchema.findByIdAndDelete(id);
+
+    res.status(200).json({
+      deletedPost,
+    })
+
+  } catch(e){
     console.log(e);
   }
 }

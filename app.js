@@ -20,23 +20,24 @@
 //   })
 // );
 
+app.use(cors());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://apnadaily-blog.netlify.app');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:3001/');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   next();
+// });
 
   //Route import kiya
-  const post = require("./Routes/postRoute");
+  const postRoute = require("./Routes/postRoute");
   const allJournal = require("./Routes/getRoute");
   const sendMail = require("./Routes/sendMailRoute");
   const userRoute = require("./Routes/userRoute");
           
 
 
-  app.use("/auth/", post);
+  app.use("/auth/", postRoute);
   app.use("/auth/", userRoute);
   app.use("/api/", allJournal);
   app.use('/api/', sendMail);
