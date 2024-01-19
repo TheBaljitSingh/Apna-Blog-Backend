@@ -2,15 +2,23 @@
   const bodyParser = require("body-parser");
   const cookieParser = require("cookie-parser");
   const cors = require('cors');
+  require('dotenv').config();
+
 
   const app = express();
 
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(express.json());
   app.use(cookieParser());
+  
 
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
   //Route import kiya
   const post = require("./Routes/postRoute");
