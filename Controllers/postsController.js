@@ -4,14 +4,16 @@ const userModel = require("../models/userModel");
 
 exports.checkName = async (req, res, next) =>{
   try{
-    const {author} = req.body;
-40
-    console.log(author);
+    // console.log("check name ka call aaya");
+    const {authorId} = req.body;
+    // console.log(authorId);
+
+    // console.log("ye author :"+req.body.authorId);
 
 
-    const data = await userModel.findById(author);
+    const data = await userModel.findById(authorId);
 
-   const name = data.name;
+    const name = data.name;
 
 
     res.status(200).json({
@@ -29,8 +31,16 @@ exports.deletePost = async (req, res, next)=>{
   try{
 
     const {id} = req.body;
+    // console.log(id);
+    console.log("is post ko delete karna hai "+id);
 
     const deletedPost = await postsSchema.findByIdAndDelete(id);
+
+    if(!deletedPost){
+      res.status(404).json({
+        message:"Server side error when try to delete this post"
+      })
+    }
 
     res.status(200).json({
       deletedPost,
