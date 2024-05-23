@@ -60,3 +60,4 @@ exports.userJournal = async (req, res) =>{
     }
 }
 
+
