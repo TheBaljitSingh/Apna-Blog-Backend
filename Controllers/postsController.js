@@ -50,22 +50,18 @@ exports.deletePost = async (req, res, next)=>{
     console.log(e);
   }
 }
-
 exports.newPost = async (req, res, next) => {
   try {
-    // console.log(req.body.date);
-    
+    const { title, content, date, display } = req.body; // Extract content from request body
+    const { _id } = req.user; // Extract user ID from req.user
 
-    const { title, description, date, display } = req.body;
-    const {_id} = req.user;
-
-
+    // Create the new post with the provided data
     const post = await postsSchema.create({
       title,
-      description,
+      content, // Use the structured content array
       date,
       display,
-      author:_id
+      author: _id, // Set the author to the user's ID
     });
 
     res.status(201).json({

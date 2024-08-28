@@ -2,11 +2,6 @@ const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 const jwt = require("jsonwebtoken");
 
-// const sendEmail = require("../Routes/sendMailRoute");
-// const crypto = require("crypto");
-
-//Register a User
-
 
 exports.registerUser = async(req,res,next)=>{
     const {name, email, password} = req.body;
@@ -24,8 +19,6 @@ exports.registerUser = async(req,res,next)=>{
     })
 
 
-    
-
 
 };
 
@@ -33,31 +26,41 @@ exports.registerUser = async(req,res,next)=>{
 exports.loginUser = async (req, res, next)=>{
 
     //koun sa use login hai req.user se aa to jayea.
+    try{
 
-    const {email, password} = req.body;
+        const {email, password} = req.body;
 
 
-    if(!email || !password){
-        return next();
+        if(!email || !password){
+            return res.status(400).json(
+                {success: false,
+                message: "Please Provide email and Password",
+                }
+            );
+        }
+        
+        const user = await User.findOne({email}).select("+password");
+
+        if(!user){
+            return res.status(401).json({ success: false, message: "Invalid email or password" });
+
+        }
+
+        const isPasswordMatched = await user.comparePassword(password);
+
+        if(!isPasswordMatched){
+            return res.status(401).json({ success: false, message: "Invalid email or password" });
+        }
+
+        console.log("login  wal user ke details: "+user.email);
+
+
+        sendToken(user,200,res);
+
     }
-    
-    const user = await User.findOne({email}).select("+password");
-
-    if(!user){
-        return next("Invalid email or password", 401);
-
+    catch(error){
+        next(error);
     }
-
-    const isPasswordMatched = await user.comparePassword(password);
-
-    if(!isPasswordMatched){
-        return next("Invalid email or password", 401);
-    }
-
-    console.log("login  wal user ke details: "+user);
-
-
-    sendToken(user,200,res);
 
 
 }
@@ -66,10 +69,10 @@ exports.loginUser = async (req, res, next)=>{
 
 //Logout User
 
-exports.logoutUser = async(req, res, next)=>{
+exports.logoutUser = async(req, res)=>{
 
     let {token} = req.body;
-    console.log(token.substring(6));
+    // console.log(token.substring(6));
 
     // token.substring(6);
 
@@ -85,46 +88,48 @@ exports.logoutUser = async(req, res, next)=>{
 
 }
 
-exports.isLogin = async(req, res, next)=>{
-    // console.log("printing the token "+ req.body.token);
-    
+exports.isLogin = async (req, res) => {
     try {
-        const {token} = req.body;
-
-        console.log(token);
-    
-        if(token){
-    
-            const decodedData = jwt.verify(token.substring(6), process.env.JWT_SECRET)
-    
-    
-            const authUser = await User.findById(decodedData.id);
-    
-            console.log("authenticated user "+ authUser);
-    
-            res.status(200).json({
-                success: true,
-                authUser: authUser
-            })
-
-        }else{
-            res.status(202).json({
-                success: false,
-                message:"not logged in || token he nahi hai bhai",
-            })
-        }
+      const authHeader = req.headers.authorization;
+  
+      // Check if the Authorization header is provided
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({
+          success: false,
+          message: 'No token provided or token format is incorrect',
+        });
+      }
+  
+      // Extract token from Authorization header
+      const token = authHeader.split(' ')[1];
+  
+      // Verify token
+      const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  
+      // Find the user by ID
+      const authUser = await User.findById(decodedData.id);
+  
+      // Check if user exists
+      if (!authUser) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+  
+      // Respond with user data
+      res.status(200).json({
+        success: true,
+        authUser,
+      });
     } catch (error) {
-        console.log(error);
-        
+      console.error('Error during authentication:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
     }
-
-
-    // const [header, payload, signature] = token.split(".");
-
-    // console.log(header+" "+payload+" "+signature);
-
-    
-}
+  };
 
 
 
