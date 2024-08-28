@@ -3,16 +3,19 @@ const mongoose = require("mongoose");
 const post = require("../models/postsModel");
 
 
-exports.getAllBlogs = async (req, res)=>{
-
+exports.getAllBlogs = async (req, res) => {
   try {
     console.log(req.url);
     const page = parseInt(req.query.page) || 1; // Current page
     const limit = parseInt(req.query.limit) || 10; // Number of items per page
     const skip = (page - 1) * limit; // Number of items to skip
 
-    // Fetch paginated blogs
-    const blogs = await post.find().skip(skip).limit(limit);
+    // Fetch paginated blogs, sorted by latest first
+    const blogs = await post.find()
+      .sort({ createdAt: -1 }) // Sort by 'createdAt' in descending order
+      .skip(skip)
+      .limit(limit);
+      
     const totalBlogs = await post.countDocuments();
 
     res.json({
@@ -24,8 +27,8 @@ exports.getAllBlogs = async (req, res)=>{
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+};
 
-}
 
 exports.getSingleBlog = async (req, res) => {
     try {
